@@ -17,23 +17,26 @@ import static support_mobile.World.*;
 public class AlertPage extends PageBase {
 
 	@AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"GEN-NavAlertsBtn\"]")
-	// @iOSXCUITFindBy(accessibility = "WELC-CloseButtonTop")
+	@iOSXCUITFindBy(accessibility = "GEN-NavAlertsBtn")
 	private MobileElement alertMenu;
 
 	@AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"ALERT-FilterBtn\"]")
-	// @iOSXCUITFindBy(accessibility = "WELC-CloseButtonTop")
+	@iOSXCUITFindBy(accessibility = "ALERT-FilterBtn")
 	private MobileElement alertFilterBtn;
 
 	@AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"ALERT-FilterByWeatherOpt\"]")
-	// @iOSXCUITFindBy(accessibility = "WELC-CloseButtonTop")
+	@iOSXCUITFindBy(accessibility = "ALERT-FilterByWeatherOpt")
 	private MobileElement alertFilterByWeather;
+	//
+	// XCUIElementTypeOther[@name="ALERT-FilterByWeatherOpt"]
 
-	@AndroidFindBy(xpath = "//android.view.ViewGroup[@content-desc=\"ALERT-FilterCancelBtn\"]")
+	// @AndroidFindBy(xpath =
+	// "//android.view.ViewGroup[@content-desc=\"ALERT-FilterCancelBtn\"]")
 	// @iOSXCUITFindBy(accessibility = "WELC-CloseButtonTop")
-	private MobileElement alertFilterCancel;
+	// private MobileElement alertFilterCancel;
 
 	@AndroidFindBy(xpath = "//android.widget.ScrollView/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.TextView[1]")
-	// @iOSXCUITFindBy(accessibility = "WELC-CloseButtonTop")
+	@iOSXCUITFindBy(accessibility = "//XCUIElementTypeOther[@name=\"ALERT-AlertsDetailsBtn\"]")
 	private List<MobileElement> alertList;
 
 	public AlertPage(AppiumDriver appiumDriver) {
@@ -50,14 +53,17 @@ public class AlertPage extends PageBase {
 		if (alertList.size() != 0) {
 			Assert.assertTrue(isDisplayed(alertList.get(0)),
 					"alert list is not displayed");
+			for (int i = 1; i < alertList.size(); i++) {
+				String uiAlert = alertList.get(i).getText();
+				Assert.assertTrue(
+						uiAlert.startsWith("Heat")
+								|| uiAlert.startsWith("Rainfall")
+								|| uiAlert.startsWith("Frost"),
+						"Alert filteration did not work for weather");
+			}
 		}
-		for (int i = 1; i < alertList.size(); i++) {
-			String uiAlert = alertList.get(i).getText();
-			Assert.assertTrue(
-					uiAlert.startsWith("Heat")
-							|| uiAlert.startsWith("Rainfall")
-							|| uiAlert.startsWith("Frost"),
-					"Alert filteration did not work for weather");
+		else{
+			System.out.println("There is no alert in this page with weather filter");
 		}
 	}
 }

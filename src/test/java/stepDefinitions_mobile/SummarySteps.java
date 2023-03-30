@@ -18,6 +18,77 @@ public class SummarySteps {
     private float etc24Hours;
     private float lfw24Hours;
 
+    @When("click on first site on weather and navigate to summary page")
+    public void clickOnFirstSiteOnWeatherAndNavigateToSummaryPage() {
+        arableTourPage.clickOnSkip();
+        termsPage.clickAgreeBtn();
+        mapPage.closeWelcomePopup();
+        listWeatherPage.navigateToList();
+        listWeatherPage.clickOnSiteFromCurrentList();
+        summaryPage.verifyCurrentConditionsLabel();
+    }
+    
+    @And("a site specific forecast request is made to calculate next rain value from response")
+    public void aSiteSpecificForecastRequestIsMadeToCalculateNextRainValueFromResponse() {
+        summaryApiHelper.sites();
+        summaryApiHelper.siteForecast();
+        ArrayList<Integer> v = restAssuredHelper.getIntegerListValueFromResponse(response, "hourly");
+        ArrayList<Integer> total = restAssuredHelper.getIntegerListValueFromResponse(response, "hourly");
+        for (int i = 1; i < total.size(); i++) {
+            float value = restAssuredHelper.getFloatValueFromResponse(response, "hourly.precip[" + i + " ]");
+            if (value == 0) {
+                nextRainfall = 0;
+            } else {
+                nextRainfall = i;
+                break;
+            }
+        }
+        System.out.println("Final next rainfall value is -> " + nextRainfall);
+    }
+    
+    @Then("verify UI next rain value with API response under forecast")
+    public void verifyUINextRainValueWithAPIResponseUnderForecast() {
+        if (nextRainfall != 0) {
+            summaryPage.verifyForecastNxtRainTileValueAgainstAPI();
+        } else {
+            summaryPage.verifyForecastNoRainTitleLabelText(jsonPayload);
+        }
+    }
+    
+    
+    @And("a site specific forecast request is made to calculate the Avg wind value from response")
+    public void aSiteSpecificForecastRequestIsMadeToCalculateTheAvgWindValueFromResponse() {
+        float temp = 0;
+        summaryApiHelper.sites();
+        summaryApiHelper.siteForecast();
+        ArrayList<Float> total = restAssuredHelper.getFloatListValueFromResponse(response, "hourly");
+        maxWind=0;
+        if (total.size() != 0) {
+            for (int i = 1; i <= 4; i++) {
+                float value = restAssuredHelper.getFloatValueFromResponse(response, "hourly.wind_speed[" + i + " ]");
+                temp = value + temp;
+                if(maxWind<temp){
+                	maxWind=temp;
+                }
+                	
+            }
+        } else {
+            temp = 1000;
+        }
+        avgWind = temp / 4;
+        System.out.println("Final API speed value is --> " + avgWind);
+    }
+    
+    
+    @Then("verify forecast avg wind value on UI and API response")
+    public void verifyForecastAvgWindValueOnUIAndAPIResponse() {
+        summaryPage.getForecastAverageWindTileValue();
+        summaryPage.verifyCurrentMaxWindTileLblText(jsonPayload);
+    }
+    
+    
+    
+    
     @When("navigate to summary page")
     public void navigateToSummaryPage() throws Exception {
         jsonPayload = jsonReader.getMobileJsonPayload(PropertiesReader.language);
@@ -250,15 +321,6 @@ public class SummarySteps {
         System.out.println("Final Precip value from API response -> " + precipValue);
     }
 
-    @When("click on first site on weather and navigate to summary page")
-    public void clickOnFirstSiteOnWeatherAndNavigateToSummaryPage() {
-        arableTourPage.clickOnSkip();
-        termsPage.clickAgreeBtn();
-        mapPage.closeWelcomePopup();
-        listWeatherPage.navigateToList();
-        listWeatherPage.clickOnSiteFromCurrentList();
-        summaryPage.verifyCurrentConditionsLabel();
-    }
 
     @Then("verify UI temperature value with API response under current condition")
     public void verifyUITemperatureValueWithAPIResponseUnderCurrentCondition() {
@@ -296,29 +358,6 @@ public class SummarySteps {
         System.out.println("Final Min Tem value from API response -> " + minTemp);
     }
 
-    @And("a site specific forecast request is made to calculate the Avg wind value from response")
-    public void aSiteSpecificForecastRequestIsMadeToCalculateTheAvgWindValueFromResponse() {
-        float temp = 0;
-        summaryApiHelper.sites();
-        summaryApiHelper.siteForecast();
-        ArrayList<Float> total = restAssuredHelper.getFloatListValueFromResponse(response, "hourly");
-        //System.out.println("Hourly API response count is -> " + total.size());
-        if (total.size() != 0) {
-            for (int i = 1; i <= 4; i++) {
-                float value = restAssuredHelper.getFloatValueFromResponse(response, "hourly.wind_speed[" + i + " ]");
-                temp = value + temp;
-            }
-        } else {
-            temp = 1000;
-        }
-        avgWind = temp / 4;
-        System.out.println("Final API speed value is --> " + avgWind);
-    }
-
-    @Then("verify forecast avg wind value on UI and API response")
-    public void verifyForecastAvgWindValueOnUIAndAPIResponse() {
-        summaryPage.getForecastAverageWindTileValue();
-    }
 
     @Then("verify UI min temperature value with API response under forecast")
     public void verifyUIMinTemperatureValueWithAPIResponseUnderForecast() {
@@ -351,32 +390,8 @@ public class SummarySteps {
         summaryPage.verifyForecastMaxTemperatureTileValueAgainstAPI();
     }
 
-    @And("a site specific forecast request is made to calculate next rain value from response")
-    public void aSiteSpecificForecastRequestIsMadeToCalculateNextRainValueFromResponse() {
-        summaryApiHelper.sites();
-        summaryApiHelper.siteForecast();
-        ArrayList<Integer> v = restAssuredHelper.getIntegerListValueFromResponse(response, "hourly");
-        ArrayList<Integer> total = restAssuredHelper.getIntegerListValueFromResponse(response, "hourly");
-        for (int i = 1; i < total.size(); i++) {
-            float value = restAssuredHelper.getFloatValueFromResponse(response, "hourly.precip[" + i + " ]");
-            if (value == 0) {
-                nextRainfall = 0;
-            } else {
-                nextRainfall = i;
-                break;
-            }
-        }
-        System.out.println("Final next rainfall value is -> " + nextRainfall);
-    }
+    
 
-    @Then("verify UI next rain value with API response under forecast")
-    public void verifyUINextRainValueWithAPIResponseUnderForecast() {
-        if (nextRainfall != 0) {
-            summaryPage.verifyForecastNxtRainTileValueAgainstAPI();
-        } else {
-            summaryPage.verifyForecastNoRainTitleLabelText(jsonPayload);
-        }
-    }
 
     @And("a site specific local hourly request is made to get last {int} sec to {int} sec etc, leaf wetness value and last {int} sec to {int} sec hours etc value")
     public void aSiteSpecificLocalHourlyRequestIsMadeToGetLastSecToSecEtcLeafWetnessValueAndLastSecToSecHoursEtcValue(int start, int end, int start1, int end1) {

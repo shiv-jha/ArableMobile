@@ -27,11 +27,11 @@ import static support_mobile.DriverManager.appiumDriver;
                 "junit:reporting/cucumber-reports/Summary.xml",
                 "rerun:target/rerun.txt" //Creates a text file with failed scenarios
         },
-        tags = "@forecast2",
+        tags = "@forecastRain",
         publish = true
 )
 
-public class SummaryRunner {
+public class SummaryRainForecastRunner {
     @BeforeClass
     public static void initialize() throws IOException {
         RestAssuredHelper restHelper = new RestAssuredHelper();

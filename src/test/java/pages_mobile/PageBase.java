@@ -55,6 +55,12 @@ public class PageBase {
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
+    public void waitForElementStaleRefreshed(MobileElement element, Integer timeout, Integer pollingTime) {
+        FluentWait<AppiumDriver> wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeout))
+                .pollingEvery(Duration.ofMillis(pollingTime)).ignoring(Exception.class);
+        wait.until(ExpectedConditions.refreshed(ExpectedConditions.stalenessOf(element)));
+    }
+    
     public void clear(MobileElement element) {
         waitForVisibility(element, 30, 1);
         element.clear();

@@ -19,6 +19,7 @@ public class ArableTourSteps {
         if (PropertiesReader.device_type.equalsIgnoreCase("Android")) {
             loginPage.clickSignIn();
         } else {
+        	loginPage.clickSignIn();
             loginPage.clickPasswordHideBtn();
         }
     }

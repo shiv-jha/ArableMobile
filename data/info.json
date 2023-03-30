@@ -1,0 +1,17 @@
+{
+  "en": {
+	"temperature": "Temperature",
+    "humidity": "Humidity",
+    "solar": "Solar Radiation",
+    "gdd": "GDD",
+    "chlor": "Chlorophyll Index",
+    "ndvi": "NDVI",
+    "preSince12": "Precipitation (Since 12AM)",
+    "preSince10": "Precipitation (Last 10 Days)",
+    "et": "ET (Last 10 Days)",
+    "daily": "Daily Evapotranspiration (ETc)",
+    "wind": "Wind",
+    "soilMoisture": "Soil Moisture",
+    "sprayWindow": "Spray Window"
+  }
+}

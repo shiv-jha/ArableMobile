@@ -60,6 +60,7 @@ public class World {
     public static float etc;
     public static float ndvi;
     public static float avgWind;
+    public static float maxWind;
     final AppiumDriver appiumDriver = new TestBase().getDriver();
 
     public void driverClass() {
